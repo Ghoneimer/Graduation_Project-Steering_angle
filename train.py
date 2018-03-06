@@ -1,7 +1,6 @@
 import os
 import tensorflow as tf
-from tensorflow.core.protobuf import saver_pb2
-import ofprepare
+import datasetprepare
 import model
 
 LOGDIR = './save/model2'
@@ -36,8 +35,8 @@ batch_size = 256
 
 # train over the dataset about 30 times
 for epoch in range(epochs):
-  for i in range(int(ofprepare.num_images/batch_size)):
-    xs, ys = ofprepare.batch_gen(ofprepare.X_train, batch_size)
+  for i in range(int(datasetprepare.num_images/batch_size)):
+    xs, ys = datasetprepare.batch_gen(datasetprepare.X_train, batch_size)
     train_step.run(feed_dict={model.x: xs, model.y_: ys, model.keep_prob: 0.8})
     '''
     loss_value = loss.eval(feed_dict={model.x:xs, model.y_: ys, model.keep_prob: 1.0})
@@ -45,13 +44,13 @@ for epoch in range(epochs):
     print(len(loss_value))
     '''
     if i % 10 == 0:
-      xs, ys = ofprepare.batch_gen(ofprepare.X_validation, batch_size)
+      xs, ys = datasetprepare.batch_gen(datasetprepare.X_validation, batch_size)
       loss_value = loss.eval(feed_dict={model.x:xs, model.y_: ys, model.keep_prob: 1.0})
       print("Epoch: %d, Step: %d, Loss: %g" % (epoch, epoch * batch_size + i, loss_value))
 
     # write logs at every iteration
     summary = merged_summary_op.eval(feed_dict={model.x:xs, model.y_: ys, model.keep_prob: 1.0})
-    summary_writer.add_summary(summary, epoch * ofprepare.num_images/batch_size + i)
+    summary_writer.add_summary(summary, epoch * datasetprepare.num_images/batch_size + i)
 
     if i % batch_size == 0:
       if not os.path.exists(LOGDIR):
