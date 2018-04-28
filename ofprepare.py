@@ -14,31 +14,36 @@ OUTPUT_DIR= 'resized'
 
 images = []
 angles = []
+i=0
 with open(DATA_DIR + INPUT_CSV) as f:
     reader = csv.DictReader(f)
     for row in reader:
         filename = row['filename']
-        filename1 = row ['angle']
         images.append(filename)
+        ofimages=str('flow_7_local'+ '/' + str(i) +'.jpg')
+        images.append(ofimages)        
+        filename1 = row ['angle']        
         angles.append(filename1)
-'''
-length=len(images)
-#for i, filename in enumerate(images):
-for i in range (0,length):
-    ofimages=str('flow_7_local'+ '/' + str(i) +'.jpg')
-    images.append(ofimages)
-    angles.append(angles[i])
-'''
+        angles.append(filename1)
+        i+=1
+
 #print(len(images))
 #print(len(angles))
+#print(images[1])
+#print(angles[1])
+images=images[2:]
+angles=angles[2:]
+print(len(images),len(angles))
+#print(images[0:10])
+#print(angles[0:10])
 num_images1=len(images)
 
 b = list(zip(images, angles))
 c=[]
 #random.shuffle(c)
-for i in range(0,int(num_images1/10)):
-    c.append(b[10*i:10*i+10])
-e=b[int(num_images1/10)*10:]
+for i in range(0,int(num_images1/2)):
+    c.append(b[2*i:2*i+2])
+e=b[int(num_images1/2)*2:]
 e=np.reshape(e,np.shape(e))
 np.random.shuffle(c)
 X_train, X_validation = train_test_split(c, test_size=0.2)
@@ -61,7 +66,7 @@ def prepare(data,batch_size):
         imgc = scipy.misc.imresize(img[-400:], [66, 200])/255.0
         #cv2.imwrite(DATA_DIR + '/' + OUTPUT_DIR + '/' + str(i) + '.jpg' , imgc)
         imgout.append(imgc)
-        angout.append((float(data[i][1])+3.0)*100.0)
+        angout.append((float(data[i][1])+3)*100.0)
     return imgout,angout
     
         
@@ -87,4 +92,5 @@ def batch_gen(data,batch_size):
         print(len(X_validation))
     return batch_imgs, batch_angles
     
-#batch_gen(X_train,10)
+a,o=batch_gen(X_train,24)
+print(o)
